@@ -30,7 +30,7 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 
-# Serve React frontend
+# Serve React build
 @app.route("/", defaults={"path": ""})
 @app.route("/<path:path>")
 def serve(path):

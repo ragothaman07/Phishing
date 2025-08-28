@@ -4,6 +4,7 @@ import os
 from features import featureExtraction
 
 app = Flask(__name__, static_folder="dist", template_folder="dist")
+
 CORS(app)
 
 @app.route('/predict', methods=['POST'])

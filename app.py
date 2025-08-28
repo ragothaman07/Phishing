@@ -4,8 +4,7 @@ import os
 from features import featureExtraction
 
 app = Flask(__name__, static_folder="dist", template_folder="dist")
-
-CORS(app)
+CORS(app)  # Allow all origins
 
 @app.route('/predict', methods=['POST'])
 def predict():
@@ -15,7 +14,15 @@ def predict():
         if not url:
             return jsonify({"error": "No URL provided"}), 400
 
-        features = featureExtraction(url)
+        # Debug logging
+        print(f"[INFO] Received URL: {url}")
+
+        try:
+            features = featureExtraction(url)
+        except Exception as fe:
+            print(f"[ERROR] featureExtraction failed: {fe}")
+            return jsonify({"error": "Failed to extract features"}), 500
+
         phishing_score = sum(features) / len(features)
         is_phishing = phishing_score > 0.5
 
@@ -25,9 +32,11 @@ def predict():
             "probability": phishing_score,
             "features": {f"feature_{i+1}": val for i, val in enumerate(features)}
         }
+
         return jsonify(response)
 
     except Exception as e:
+        print(f"[ERROR] predict failed: {e}")
         return jsonify({"error": str(e)}), 500
 
 
